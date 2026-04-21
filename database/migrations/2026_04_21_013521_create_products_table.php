@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('brand');
+            $table->json('sizes')->nullable();
+            $table->json('colors')->nullable(); 
             $table->text('description');
             $table->decimal('price', 8, 2);
             $table->string('image_url');
