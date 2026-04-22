@@ -9,6 +9,11 @@ use App\Models\Product;
 
 class CartController extends Controller
 {
+     public function index()
+    {
+        $cart = session()->get('cart', []);
+        return view('cart.index', compact('cart'));
+    }
     
     public function add(Product $product) {
         $cart = session()->get('cart', []);
@@ -26,7 +31,7 @@ class CartController extends Controller
             ];
         }
         session()->put('cart', $cart);
-        
+
         return back()->with('success', 'Added to cart!');
     }
 

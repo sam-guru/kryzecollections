@@ -26,6 +26,21 @@
 
             <!-- Settings Dropdown (Right) -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                
+                 <!-- ADD THE CART ICON HERE -->
+                <div class="me-4 relative">
+                    <a href="{{ route('cart.index') }}" class="text-gray-500 hover:text-black transition relative p-2 inline-block">
+                        <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                        </svg>
+                        
+                        @if(session('cart') && count(session('cart')) > 0)
+                            <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-black rounded-full">
+                                {{ count(session('cart')) }}
+                            </span>
+                        @endif
+                    </a>
+                </div>
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
