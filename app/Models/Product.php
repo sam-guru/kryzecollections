@@ -42,4 +42,13 @@ class Product extends Model
         });
     }
 
+    public function isFavoritedBy($user)
+    {
+        if (!$user) return false;
+        return \DB::table('favorites')
+            ->where('user_id', $user->id)
+            ->where('product_id', $this->id)
+            ->exists();
+    }
+
 }
