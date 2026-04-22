@@ -2,7 +2,7 @@
 
 <div class="bg-white border border-gray-100 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition">
     <div class="relative aspect-[3/4]">
-        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+        <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
         
         <!-- favorite heart button -->
         <form action="{{ route('favorite.toggle', $product) }}" method="POST" class="absolute top-3 right-3">
@@ -26,9 +26,13 @@
         <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-4">{{ $product->brand }}</p>
         
         <!-- affiliate link -->
-        <a href="{{ $product->affiliate_url }}" target="_blank" 
-           class="block w-full bg-black text-white text-center py-2.5 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition">
-            Shop Partner
-        </a>
+        @if($product->is_affiliate)
+            <a href="{{ $product->affiliate_url }}" target="_blank" class="...">View on Partner</a>
+        @else
+            <form action="{{ route('cart.add', $product) }}" method="POST">
+                @csrf
+                <button type="submit" class="...">Add to Cart</button>
+            </form>
+        @endif
     </div>
 </div>

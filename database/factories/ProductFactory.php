@@ -14,7 +14,7 @@ class ProductFactory extends Factory
             'description' => fake()->paragraph(),
             'price' => fake()->randomFloat(2, 25, 250),
             // High-quality random fashion-style images
-            'image_url' => 'https://picsum.photos>uuid().'/600/800', 
+            'image_url' => 'https://picsum.photos' . fake()->uuid() . '/600/800', 
             'affiliate_url' => 'https://awin.com',
             'category' => fake()->randomElement(['Men', 'Women', 'Accessories']),
             // JSON fields for our filters
