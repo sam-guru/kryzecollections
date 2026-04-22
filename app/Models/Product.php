@@ -12,6 +12,7 @@ class Product extends Model
     protected $casts = [
         'sizes' => 'array',
         'colors' => 'array',
+        'is_affiliate' => 'boolean', 
     ];
 
     public function scopeFilter($query, array $filters)

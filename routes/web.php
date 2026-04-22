@@ -4,9 +4,15 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\CartController;
+
 
 
 Route::get('/', [ProductController::class, 'index']);
+
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');

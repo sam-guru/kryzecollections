@@ -9,22 +9,25 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('brand');
-            $table->json('sizes')->nullable();
-            $table->json('colors')->nullable(); 
-            $table->text('description');
-            $table->decimal('price', 8, 2);
-            $table->string('image_url');
-            $table->string('affiliate_url');
-            $table->string('category');
-            $table->timestamps();
-        });
-    }
+   public function up(): void
+{
+    Schema::create('products', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('brand');
+        $table->text('description');
+        $table->decimal('price', 8, 2);
+        $table->string('image_url');
+        $table->string('affiliate_url')->nullable(); // made nullable since local items don't need it
+        $table->string('category');
+        $table->json('sizes')->nullable();
+        $table->json('colors')->nullable();
+        
+        $table->boolean('is_affiliate')->default(false); 
+        
+        $table->timestamps();
+    });
+}
 
 
     /**
