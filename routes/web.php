@@ -19,6 +19,16 @@ Route::post('/cart/add/{product}', [CartController::class, 'add'])
 Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.index');
 
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])
+    ->name('cart.remove');
+
+Route::delete('/cart/clear', [CartController::class, 'clear'])
+    ->name('cart.clear');
+
+Route::get('/clear-cart', function () {
+    session()->forget('cart');
+    return redirect('/');
+});
 
 // 👤 USER ROUTES
 Route::middleware('auth')->group(function () {

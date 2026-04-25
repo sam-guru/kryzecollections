@@ -7,9 +7,6 @@
                 <div class="shrink-0 flex items-center">
                     <a href="/" class="text-2xl font-black italic tracking-tighter">KRYZE</a>
                 </div>
-                <a href="{{ route('admin.products.index') }}">
-    Admin Products
-</a>
 
                 <!-- Shop Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex uppercase text-[11px] font-bold tracking-widest">
