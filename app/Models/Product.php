@@ -4,54 +4,76 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
     use HasFactory;
 
+    /**
+     * Mass assignable fields
+     */
+    protected $fillable = [
+        'name',
+        'brand',
+        'price',
+        'category',
+        'image_url',
+        'is_affiliate',
+        'affiliate_url',
+        'sizes',
+        'colors'
+    ];
+
+    /**
+     * Cast attributes
+     */
     protected $casts = [
         'sizes' => 'array',
         'colors' => 'array',
-        'is_affiliate' => 'boolean', 
+        'is_affiliate' => 'boolean',
     ];
 
+    /**
+     * Filter products (category, size, color, sort)
+     */
     public function scopeFilter($query, array $filters)
     {
-
-        $query->when($filters['category'] ?? null, fn($q, $cat) => $q->where('category', $cat));
-
-        // Filter by Size (searches inside the JSON array)
-        $query->when($filters['size'] ?? null, function ($q, $size) {
-            $q->whereJsonContains('sizes', $size);
-        });
-
-        // Filter by Colour
-        $query->when($filters['color'] ?? null, function ($q, $color) {
-            $q->whereJsonContains('colors', $color);
-        });
-        
-        // filter by category
+        // Category filter
         $query->when($filters['category'] ?? null, function ($query, $category) {
             $query->where('category', $category);
         });
 
-        // sort by price
+        // Size filter (JSON column)
+        $query->when($filters['size'] ?? null, function ($query, $size) {
+            $query->whereJsonContains('sizes', $size);
+        });
+
+        // Color filter (JSON column)
+        $query->when($filters['color'] ?? null, function ($query, $color) {
+            $query->whereJsonContains('colors', $color);
+        });
+
+        // Sorting
         $query->when($filters['sort'] ?? null, function ($query, $sort) {
-            if ($sort === 'price_high') {
-                $query->orderBy('price', 'desc');
-            } elseif ($sort === 'price_low') {
-                $query->orderBy('price', 'asc');
-            }
+            match ($sort) {
+                'price_high' => $query->orderBy('price', 'desc'),
+                'price_low'  => $query->orderBy('price', 'asc'),
+                default      => null,
+            };
         });
     }
 
-    public function isFavoritedBy($user)
+    /**
+     * Check if product is favorited by user
+     */
+    public function isFavoritedBy($user): bool
     {
         if (!$user) return false;
-        return \DB::table('favorites')
+
+        return DB::table('favorites')
             ->where('user_id', $user->id)
             ->where('product_id', $this->id)
             ->exists();
     }
-
 }

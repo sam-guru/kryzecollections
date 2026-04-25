@@ -2,8 +2,8 @@
 
 <div class="bg-white border border-gray-100 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition">
     <div class="relative aspect-[3/4]">
-        <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-        
+
+        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">        
         <!-- favorite heart button -->
         <form action="{{ route('favorite.toggle', $product) }}" method="POST" class="absolute top-3 right-3">
             @csrf
