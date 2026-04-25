@@ -18,7 +18,8 @@ class Product extends Model
         'brand',
         'price',
         'category',
-        'image_url',
+        'description',
+        'main_image',
         'is_affiliate',
         'affiliate_url',
         'sizes',
@@ -35,30 +36,36 @@ class Product extends Model
     ];
 
     /**
+     * Relationships
+     */
+
+    // 🔥 Multiple product images (gallery)
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+
+    /**
      * Filter products (category, size, color, sort)
      */
     public function scopeFilter($query, array $filters)
     {
-        // Category filter
-        $query->when($filters['category'] ?? null, function ($query, $category) {
-            $query->where('category', $category);
-        });
+        $query->when($filters['category'] ?? null, fn($q, $cat) =>
+            $q->where('category', $cat)
+        );
 
-        // Size filter (JSON column)
-        $query->when($filters['size'] ?? null, function ($query, $size) {
-            $query->whereJsonContains('sizes', $size);
-        });
+        $query->when($filters['size'] ?? null, fn($q, $size) =>
+            $q->whereJsonContains('sizes', $size)
+        );
 
-        // Color filter (JSON column)
-        $query->when($filters['color'] ?? null, function ($query, $color) {
-            $query->whereJsonContains('colors', $color);
-        });
+        $query->when($filters['color'] ?? null, fn($q, $color) =>
+            $q->whereJsonContains('colors', $color)
+        );
 
-        // Sorting
-        $query->when($filters['sort'] ?? null, function ($query, $sort) {
+        $query->when($filters['sort'] ?? null, function ($q, $sort) {
             match ($sort) {
-                'price_high' => $query->orderBy('price', 'desc'),
-                'price_low'  => $query->orderBy('price', 'asc'),
+                'price_high' => $q->orderBy('price', 'desc'),
+                'price_low'  => $q->orderBy('price', 'asc'),
                 default      => null,
             };
         });

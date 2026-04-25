@@ -14,15 +14,17 @@ return new class extends Migration
     Schema::create('products', function (Blueprint $table) {
         $table->id();
         $table->string('name');
-        $table->string('brand');
+        $table->string('brand')->nullable();
         $table->text('description');
-        $table->decimal('price', 8, 2);
-        $table->string('image_url');
-        $table->string('affiliate_url')->nullable(); // made nullable since local items don't need it
+        $table->decimal('price', 10, 2);
         $table->string('category');
+        
+        $table->string('main_image');
+
         $table->json('sizes')->nullable();
         $table->json('colors')->nullable();
-        
+
+        $table->string('affiliate_url')->nullable(); // made nullable since local items don't need it
         $table->boolean('is_affiliate')->default(false); 
         
         $table->timestamps();
