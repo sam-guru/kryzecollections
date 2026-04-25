@@ -50,36 +50,59 @@
 
                         @forelse($products as $product)
 
-                            <!-- 🔥 CLICKABLE PRODUCT CARD -->
-                            <a href="{{ route('products.show', $product) }}">
-                                <div class="bg-white border border-gray-100 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition">
+                            <div class="bg-white border border-gray-100 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition">
 
-                                    <!-- Image -->
+                                <!-- IMAGE (clickable) -->
+                                <a href="{{ route('products.show', $product) }}">
                                     <div class="aspect-[3/4] overflow-hidden">
                                         <img 
-                                            src="{{ asset($product->main_image) }}" 
+                                            src="{{ asset($product->main_image ?? 'images/placeholder.jpg') }}" 
                                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                                         >
                                     </div>
+                                </a>
 
-                                    <!-- Info -->
-                                    <div class="p-4">
-                                        <div class="flex justify-between items-start mb-1">
-                                            <h3 class="text-sm font-bold text-gray-900 truncate">
-                                                {{ $product->name }}
-                                            </h3>
-                                            <p class="text-sm font-black">
-                                                £{{ number_format($product->price, 2) }}
-                                            </p>
-                                        </div>
+                                <!-- INFO -->
+                                <div class="p-4">
 
-                                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">
-                                            {{ $product->brand }}
+                                    <div class="flex justify-between items-start mb-1">
+                                        <h3 class="text-sm font-bold text-gray-900 truncate">
+                                            {{ $product->name }}
+                                        </h3>
+
+                                        <p class="text-sm font-black">
+                                            £{{ number_format($product->price, 2) }}
                                         </p>
                                     </div>
 
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-4">
+                                        {{ $product->brand }}
+                                    </p>
+
+                                    <!-- 🔥 ACTIONS -->
+                                    <div class="flex gap-2">
+                                        
+
+                                        <!-- VIEW -->
+                                        <a href="{{ route('products.show', $product) }}"
+                                        class="flex-1 text-center border py-2 text-[10px] font-bold uppercase hover:bg-gray-50">
+                                            View
+                                        </a>
+
+                                        <!-- ADD TO CART -->
+                                        <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full bg-black text-white py-2 text-[10px] font-bold uppercase">
+                                                Add
+                                            </button>
+                                        </form>
+
+                                    </div>
+
                                 </div>
-                            </a>
+
+                            </div>
 
                         @empty
 
