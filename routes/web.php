@@ -8,7 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\AdminProductController;
 
 // 🛍️ PUBLIC ROUTES
-Route::get('/', [ProductController::class, 'index']);
+Route::get('/', [ProductController::class, 'index'])->name('home');
 
 Route::get('/product/{product}', [ProductController::class, 'show'])
     ->name('products.show');
@@ -20,28 +20,40 @@ Route::get('/cart', [CartController::class, 'index'])
     ->name('cart.index');
 
 
-// 👤 AUTH USER ROUTES
+// 👤 USER ROUTES
 Route::middleware('auth')->group(function () {
-
-    Route::post('/favorite/{product}', [FavoriteController::class, 'toggle'])
-        ->name('favorite.toggle');
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-});
-
-
-// 🧑‍💼 ADMIN ROUTES
-Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::resource('admin/products', AdminProductController::class);
+    Route::post('/favorite/{product}', [FavoriteController::class, 'toggle'])
+        ->name('favorite.toggle');
 
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+
+// ADMIN ROUTES
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        Route::resource('products', AdminProductController::class);
+    });
+
+
+
+    require __DIR__.'/auth.php';
