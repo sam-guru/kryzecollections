@@ -32,8 +32,8 @@
                     @foreach($products as $product)
                         <tr class="border-t">
                             <td class="p-4">
-                                <img src="{{ asset($product->main_image) }}"
-                                     class="w-14 h-16 object-cover rounded">
+                                <img src="{{ asset($product->main_image) }}" class="w-14 h-16 object-cover rounded">
+
                             </td>
 
                             <td class="p-4 font-bold">
