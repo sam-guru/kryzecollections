@@ -1,23 +1,16 @@
 <x-app-layout>
 
-   @foreach($product->images as $image)
     @php
-        $galleryImageUrl = $imageUrl($image->image_path);
-    @endphp
+        $mainImagePath = $product->main_image;
 
-    <button 
-        type="button"
-        @click="activeImage = @js($galleryImageUrl)"
-        class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
-        :class="activeImage === @js($galleryImageUrl) ? 'border-black' : 'border-gray-200'"
-    >
-        <img 
-            src="{{ $galleryImageUrl }}"
-            alt="{{ $product->name }}"
-            class="w-full h-full object-cover"
-        >
-    </button>
-@endforeach
+        if ($mainImagePath && str_starts_with($mainImagePath, 'storage/')) {
+            $mainImagePath = str_replace('storage/', '', $mainImagePath);
+        }
+
+        $mainImageUrl = $mainImagePath
+            ? \Illuminate\Support\Facades\Storage::disk('s3')->url($mainImagePath)
+            : asset('images/placeholder.jpg');
+    @endphp
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
@@ -32,7 +25,7 @@
                 <!-- Thumbnails -->
                 <div class="order-2 md:order-1 flex md:flex-col gap-3 overflow-x-auto">
 
-                    <!-- Main image thumbnail -->
+                    <!-- Main Image Thumbnail -->
                     <button 
                         type="button"
                         @click="activeImage = @js($mainImageUrl)"
@@ -46,19 +39,28 @@
                         >
                     </button>
 
+                    <!-- Extra Images -->
                     @foreach($product->images as $image)
                         @php
-                            $galleryImageUrl = productImageUrl($image->image_path);
+                            $galleryPath = $image->image_path;
+
+                            if ($galleryPath && str_starts_with($galleryPath, 'storage/')) {
+                                $galleryPath = str_replace('storage/', '', $galleryPath);
+                            }
+
+                            $galleryUrl = $galleryPath
+                                ? \Illuminate\Support\Facades\Storage::disk('s3')->url($galleryPath)
+                                : asset('images/placeholder.jpg');
                         @endphp
 
                         <button 
                             type="button"
-                            @click="activeImage = @js($galleryImageUrl)"
+                            @click="activeImage = @js($galleryUrl)"
                             class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
-                            :class="activeImage === @js($galleryImageUrl) ? 'border-black' : 'border-gray-200'"
+                            :class="activeImage === @js($galleryUrl) ? 'border-black' : 'border-gray-200'"
                         >
                             <img 
-                                src="{{ $galleryImageUrl }}"
+                                src="{{ $galleryUrl }}"
                                 alt="{{ $product->name }}"
                                 class="w-full h-full object-cover"
                             >
@@ -67,7 +69,7 @@
 
                 </div>
 
-                <!-- Main Image -->
+                <!-- Main Display Image -->
                 <div class="order-1 md:order-2 aspect-[3/4] bg-gray-100 overflow-hidden rounded-xl">
                     <img 
                         :src="activeImage"
