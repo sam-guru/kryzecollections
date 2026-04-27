@@ -3,17 +3,20 @@
     @php
         function productImageUrl($path) {
             if (!$path) {
-                // Returns a placeholder if path is empty
                 return asset('images/placeholder.jpg');
             }
 
-            // If the path is already a full URL, just return it
             if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
                 return $path;
             }
 
-            // Otherwise, generate the URL using the Cloud/S3 storage driver
-            return Storage::url($path);
+            $path = ltrim($path, '/');
+
+            if (str_starts_with($path, 'storage/')) {
+                $path = str_replace('storage/', '', $path);
+            }
+
+            return Storage::disk('s3')->url($path);
         }
 
         $mainImageUrl = productImageUrl($product->main_image);
@@ -25,9 +28,7 @@
 
             <!-- LEFT: IMAGE GALLERY -->
             <div 
-                x-data="{
-                    activeImage: @js($mainImageUrl)
-                }"
+                x-data="{ activeImage: @js($mainImageUrl) }"
                 class="grid grid-cols-1 md:grid-cols-[90px_1fr] gap-4"
             >
 
@@ -38,7 +39,7 @@
                     <button 
                         type="button"
                         @click="activeImage = @js($mainImageUrl)"
-                        class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black transition"
+                        class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
                         :class="activeImage === @js($mainImageUrl) ? 'border-black' : 'border-gray-200'"
                     >
                         <img 
@@ -48,31 +49,28 @@
                         >
                     </button>
 
-                    <!-- Extra product images (Gallery) -->
-                    @if($product->images)
-                        @foreach($product->images as $image)
-                            @php
-                                $galleryImageUrl = productImageUrl($image->image_path);
-                            @endphp
+                    @foreach($product->images as $image)
+                        @php
+                            $galleryImageUrl = productImageUrl($image->image_path);
+                        @endphp
 
-                            <button 
-                                type="button"
-                                @click="activeImage = @js($galleryImageUrl)"
-                                class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black transition"
-                                :class="activeImage === @js($galleryImageUrl) ? 'border-black' : 'border-gray-200'"
+                        <button 
+                            type="button"
+                            @click="activeImage = @js($galleryImageUrl)"
+                            class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
+                            :class="activeImage === @js($galleryImageUrl) ? 'border-black' : 'border-gray-200'"
+                        >
+                            <img 
+                                src="{{ $galleryImageUrl }}"
+                                alt="{{ $product->name }}"
+                                class="w-full h-full object-cover"
                             >
-                                <img 
-                                    src="{{ $galleryImageUrl }}"
-                                    alt="{{ $product->name }}"
-                                    class="w-full h-full object-cover"
-                                >
-                            </button>
-                        @endforeach
-                    @endif
+                        </button>
+                    @endforeach
 
                 </div>
 
-                <!-- Featured Image -->
+                <!-- Main Image -->
                 <div class="order-1 md:order-2 aspect-[3/4] bg-gray-100 overflow-hidden rounded-xl">
                     <img 
                         :src="activeImage"
@@ -102,15 +100,17 @@
                     £{{ number_format($product->price, 2) }}
                 </p>
 
-                <!-- SIZE SELECTION -->
                 @if($product->sizes)
                     <div class="mb-6">
-                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Size</p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">
+                            Size
+                        </p>
+
                         <div class="flex gap-2 flex-wrap">
                             @foreach($product->sizes as $size)
                                 <button 
                                     type="button"
-                                    class="border px-4 py-2 text-xs font-bold hover:border-black transition"
+                                    class="border px-4 py-2 text-xs font-bold hover:border-black"
                                     onclick="selectSize(this, '{{ $size }}')"
                                 >
                                     {{ $size }}
@@ -120,15 +120,17 @@
                     </div>
                 @endif
 
-                <!-- COLOR SELECTION -->
                 @if($product->colors)
                     <div class="mb-8">
-                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Colour</p>
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">
+                            Colour
+                        </p>
+
                         <div class="flex gap-3">
                             @foreach($product->colors as $color)
                                 <button 
                                     type="button"
-                                    class="w-6 h-6 rounded-full border cursor-pointer hover:scale-110 transition"
+                                    class="w-6 h-6 rounded-full border cursor-pointer"
                                     style="background-color: {{ strtolower($color) }}"
                                     onclick="selectColor(this, '{{ $color }}')"
                                 ></button>
@@ -137,9 +139,9 @@
                     </div>
                 @endif
 
-                <!-- FORM -->
                 <form action="{{ route('cart.add', $product) }}" method="POST">
                     @csrf
+
                     <input type="hidden" name="size" id="selectedSize">
                     <input type="hidden" name="color" id="selectedColor">
 
@@ -163,12 +165,12 @@
 
     </div>
 
-    <!-- JS SELECTION LOGIC -->
     <script>
         function selectSize(el, size) {
             document.querySelectorAll('[onclick^="selectSize"]').forEach(btn => {
                 btn.classList.remove('bg-black', 'text-white');
             });
+
             el.classList.add('bg-black', 'text-white');
             document.getElementById('selectedSize').value = size;
         }
@@ -177,6 +179,7 @@
             document.querySelectorAll('[onclick^="selectColor"]').forEach(btn => {
                 btn.classList.remove('ring-2', 'ring-black');
             });
+
             el.classList.add('ring-2', 'ring-black');
             document.getElementById('selectedColor').value = color;
         }
