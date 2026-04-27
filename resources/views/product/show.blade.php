@@ -4,14 +4,57 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
-            <!-- 🔥 LEFT: IMAGE GALLERY -->
             <!-- LEFT: IMAGE GALLERY -->
-<div 
-    x-data="{
-        activeImage: '{{ asset($product->main_image) }}'
-    }"
-    class="grid grid-cols-1 md:grid-cols-[90px_1fr] gap-4"
->
+        <div 
+            x-data="{
+                activeImage: '{{ Storage::url($product->main_image) }}'
+            }"
+            class="grid grid-cols-1 md:grid-cols-[90px_1fr] gap-4"
+        >
+
+        <!-- Thumbnails -->
+        <div class="order-2 md:order-1 flex md:flex-col gap-3 overflow-x-auto">
+
+            <!-- Main image thumbnail -->
+            <button 
+                type="button"
+                @click="activeImage = '{{ Storage::url($product->main_image) }}'"
+                class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
+                :class="activeImage === '{{ Storage::url($product->main_image) }}' ? 'border-black' : 'border-gray-200'"
+            >
+                <img 
+                    src="{{ Storage::url($product->main_image) }}"
+                    class="w-full h-full object-cover"
+                >
+            </button>
+
+            @foreach($product->images as $image)
+                <button 
+                    type="button"
+                    @click="activeImage = '{{ Storage::url($image->image_path) }}'"
+                    class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
+                    :class="activeImage === '{{ Storage::url($image->image_path) }}' ? 'border-black' : 'border-gray-200'"
+                >
+                    <img 
+                        src="{{ Storage::url($image->image_path) }}"
+                        class="w-full h-full object-cover"
+                    >
+                </button>
+            @endforeach
+
+        </div>
+
+        <!-- Main Image -->
+        <div class="order-1 md:order-2 aspect-[3/4] bg-gray-100 overflow-hidden rounded-xl">
+            <img 
+                :src="activeImage"
+                alt="{{ $product->name }}"
+                class="w-full h-full object-cover"
+            >
+        </div>
+
+    </div>
+
 
     <!-- Thumbnails -->
     <div class="order-2 md:order-1 flex md:flex-col gap-3 overflow-x-auto">
