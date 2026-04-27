@@ -1,26 +1,23 @@
 <x-app-layout>
 
+   @foreach($product->images as $image)
     @php
-        function productImageUrl($path) {
-            if (!$path) {
-                return asset('images/placeholder.jpg');
-            }
-
-            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-                return $path;
-            }
-
-            $path = ltrim($path, '/');
-
-            if (str_starts_with($path, 'storage/')) {
-                $path = str_replace('storage/', '', $path);
-            }
-
-            return Storage::disk('s3')->url($path);
-        }
-
-        $mainImageUrl = productImageUrl($product->main_image);
+        $galleryImageUrl = $imageUrl($image->image_path);
     @endphp
+
+    <button 
+        type="button"
+        @click="activeImage = @js($galleryImageUrl)"
+        class="w-20 h-24 shrink-0 border overflow-hidden rounded-md hover:border-black"
+        :class="activeImage === @js($galleryImageUrl) ? 'border-black' : 'border-gray-200'"
+    >
+        <img 
+            src="{{ $galleryImageUrl }}"
+            alt="{{ $product->name }}"
+            class="w-full h-full object-cover"
+        >
+    </button>
+@endforeach
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
