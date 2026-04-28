@@ -56,9 +56,10 @@
                                 <a href="{{ route('products.show', $product) }}">
                                     <div class="aspect-[3/4] overflow-hidden">
                                         <img 
-                                            src="{{Storage::url($product->main_image)}}" 
+                                            src="{{ asset($product->main_image) }}" 
                                             class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                                         >
+
                                     </div>
                                 </a>
 
