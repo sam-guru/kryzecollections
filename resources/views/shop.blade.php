@@ -36,6 +36,16 @@
     <div class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+            <!-- success message! -->
+            @if(session()->has('success'))
+                <div id="flash-message" class="mb-6 p-4 bg-black text-white text-[10px] font-bold uppercase tracking-widest flex justify-between items-center">
+                    <span>{{ session('success') }}</span>
+                    <button onclick="this.parentElement.remove()" class="text-white/50 hover:text-white">
+                        Dismiss
+                    </button>
+                </div>
+            @endif
+
             <div class="flex flex-col md:flex-row gap-16">
 
                 <!-- sidebar -->
@@ -150,4 +160,22 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const message = document.getElementById('flash-message');
+            
+            if (message) {
+                // wait 2 seconds, then start fading out
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    
+                    // after the 500ms fade transition finishes, remove it from the DOM
+                    setTimeout(() => {
+                        message.remove();
+                    }, 500);
+                }, 2000); // Change 3000 to 5000 if you want it to stay for 5 seconds
+            }
+        });
+    </script>
 </x-app-layout>
