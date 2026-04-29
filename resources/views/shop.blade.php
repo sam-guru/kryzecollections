@@ -1,5 +1,5 @@
 <x-app-layout>
-    <!-- Header -->
+    <!-- header -->
     <x-slot name="header">
         <div class="flex justify-between items-end">
             <div>
@@ -12,7 +12,7 @@
                 </h2>
             </div>
 
-            <!-- Sort -->
+            <!-- sort -->
             <form method="GET" action="/" class="flex items-center gap-4">
                 @foreach(request()->except('sort') as $key => $value)
                     <input type="hidden" name="{{ $key }}" value="{{ $value }}">
@@ -32,18 +32,18 @@
         </div>
     </x-slot>
 
-    <!-- Content -->
+    <!-- content -->
     <div class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="flex flex-col md:flex-row gap-16">
 
-                <!-- Sidebar -->
+                <!-- sidebar -->
                 <aside class="w-full md:w-48 space-y-12">
                     <x-filter-sidebar />
                 </aside>
 
-                <!-- Products -->
+                <!-- products -->
                 <div class="flex-1">
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-8">
@@ -52,7 +52,7 @@
 
                             <div class="bg-white border border-gray-100 rounded-xl overflow-hidden group shadow-sm hover:shadow-md transition">
 
-                                <!-- IMAGE (clickable) -->
+                                <!-- image (clickable) -->
                                 <a href="{{ route('products.show', $product) }}">
                                     <div class="aspect-[3/4] overflow-hidden">
                                         <img 
@@ -63,7 +63,7 @@
                                     </div>
                                 </a>
 
-                                <!-- INFO -->
+                                <!-- info -->
                                 <div class="p-4">
 
                                     <div class="flex justify-between items-start mb-1">
@@ -80,22 +80,40 @@
                                         {{ $product->brand }}
                                     </p>
 
-                                    <!-- 🔥 ACTIONS -->
+                                    
+                                    <!-- actions -->
                                     <div class="flex gap-2">
                                         
+                                        <!-- favorite togle -->
+                                        <form action="{{ route('favorite.toggle', $product) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full border py-2 flex items-center justify-center hover:bg-gray-50 transition group">
+                                                
+                                                @php
+                                                    $isFavorited = $product->isFavoritedBy(auth()->user());
+                                                @endphp
 
-                                        <!-- VIEW -->
-                                        <a href="{{ route('products.show', $product) }}"
-                                        class="flex-1 text-center border py-2 text-[10px] font-bold uppercase hover:bg-gray-50">
-                                            View
-                                        </a>
+                                                @if($isFavorited)
+                                                    <!-- solid red heart (favorited) -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-600">
+                                                        <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001Z" />
+                                                    </svg>
+                                                @else
+                                                    <!-- outline heart (unfavorited) -->
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 group-hover:text-red-400 transition">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                                    </svg>
+                                                @endif
+                                            </button>
+                                        </form>
 
-                                        <!-- ADD TO CART -->
+                                        <!-- add to cart -->
                                         <form action="{{ route('cart.add', $product) }}" method="POST" class="flex-1">
                                             @csrf
                                             <button type="submit"
-                                                class="w-full bg-black text-white py-2 text-[10px] font-bold uppercase">
-                                                Add
+                                                class="w-full bg-black text-white py-2 text-[10px] font-bold uppercase hover:bg-gray-900 transition">
+                                                Add to cart
                                             </button>
                                         </form>
 
@@ -107,7 +125,7 @@
 
                         @empty
 
-                            <!-- Empty State -->
+                            <!-- if products empty -->
                             <div class="col-span-full text-center py-32">
                                 <p class="text-gray-400 font-medium italic">
                                     No products found matching your selection.
@@ -122,7 +140,7 @@
 
                     </div>
 
-                    <!-- Pagination -->
+                    <!-- pagination -->
                     <div class="mt-20">
                         {{ $products->links() }}
                     </div>
