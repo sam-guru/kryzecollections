@@ -7,8 +7,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\CheckoutController;
 
-// 🛍️ PUBLIC ROUTES
+
+//  PUBLIC ROUTES
 Route::get('/', [ProductController::class, 'index'])->name('home');
 
 Route::get('/product/{product}', [ProductController::class, 'show'])
@@ -31,7 +33,12 @@ Route::get('/clear-cart', function () {
     return redirect('/');
 });
 
-// 👤 USER ROUTES
+Route::get('/checkout-complete', [CheckoutController::class, 'complete'])->name('checkout.success');
+
+
+
+
+//  USER ROUTES
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -50,6 +57,8 @@ Route::middleware('auth')->group(function () {
 });
 
 
+
+
 // ADMIN ROUTES
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
@@ -64,5 +73,4 @@ Route::middleware(['auth', 'admin'])
     });
 
 
-
-    require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';

@@ -101,9 +101,9 @@
                                 <span>£{{ number_format($total, 2) }}</span>
                             </div>
 
-                            <a href="/checkout"
-                               class="block w-full bg-black text-white text-center py-4 mt-8 text-[11px] font-black uppercase tracking-widest hover:bg-gray-800 transition">
-                                Proceed to Checkout
+                            <a href="{{ route('checkout.success') }}" 
+                            class="block text-center w-full bg-black text-white py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition shadow-lg">
+                                PROCEED TO CHECKOUT
                             </a>
 
                         </div>
