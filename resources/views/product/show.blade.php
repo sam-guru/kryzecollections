@@ -95,7 +95,7 @@
                 </div>
                 @endif
 
-                <!-- COLOR SELECT -->
+                <!-- color select -->
                 @if($product->colors)
                 <div class="mb-8">
                     <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Colour</p>
@@ -111,14 +111,30 @@
                 </div>
                 @endif
 
-                <!-- ADD TO CART -->
-                <form action="{{ route('cart.add', $product) }}" method="POST">
+                <!-- add to cart -->
+                <form action="{{ route('cart.add', $product) }}" method="POST" id="addToCartForm">
                     @csrf
                     <input type="hidden" name="size" id="selectedSize">
                     <input type="hidden" name="color" id="selectedColor">
-                    <button class="w-full bg-black text-white py-4 text-sm font-bold uppercase tracking-widest hover:bg-gray-900 transition">
+
+                    <!-- quantity selector -->
+                    <div class="mb-6">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Quantity</p>
+                        <div class="flex items-center border border-gray-200 w-32">
+                            <button type="button" onclick="changeQty(-1)" class="px-4 py-2 hover:bg-gray-100">-</button>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" class="w-full text-center border-none text-sm focus:ring-0">
+                            <button type="button" onclick="changeQty(1)" class="px-4 py-2 hover:bg-gray-100">+</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-black text-white py-4 text-sm font-bold uppercase tracking-widest hover:bg-gray-900 transition disabled:bg-gray-300"
+                            id="addToCartBtn">
                         Add to Cart
                     </button>
+                    
+                    <!-- error message -->
+                    <p id="sizeError" class="text-red-500 text-[10px] mt-2 hidden uppercase font-bold">Please select a size before adding to cart</p>
                 </form>
 
                 <div class="mt-10 border-t pt-6">
@@ -137,6 +153,9 @@
             });
             el.classList.add('bg-black','text-white');
             document.getElementById('selectedSize').value = size;
+            
+            // hide error message once size is selected
+            document.getElementById('sizeError').classList.add('hidden');
         }
 
         function selectColor(el, color) {
@@ -146,6 +165,30 @@
             el.classList.add('ring-2','ring-black');
             document.getElementById('selectedColor').value = color;
         }
+
+        // quantity logic
+        function changeQty(amount) {
+            let qtyInput = document.getElementById('quantity');
+            let currentVal = parseInt(qtyInput.value);
+            if (currentVal + amount >= 1) {
+                qtyInput.value = currentVal + amount;
+            }
+        }
+
+        // form validation logic
+        document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+            const selectedSize = document.getElementById('selectedSize').value;
+            const hasSizes = {{ $product->sizes ? 'true' : 'false' }};
+            const errorMsg = document.getElementById('sizeError');
+
+            // If product has sizes and none are selected, stop the form
+            if (hasSizes && !selectedSize) {
+                e.preventDefault();
+                errorMsg.classList.remove('hidden');
+                // Shake effect or scroll to sizes if needed
+                window.scrollTo({ top: errorMsg.offsetTop - 200, behavior: 'smooth' });
+            }
+        });
     </script>
 
 </x-app-layout>

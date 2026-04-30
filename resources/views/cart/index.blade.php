@@ -15,27 +15,23 @@
                     <!-- ITEMS -->
                     <div class="flex-1 space-y-6">
 
-                        @foreach(session('cart') as $id => $details)
-
+                       @foreach(session('cart') as $key => $details)
                             @php
                                 $image = $details['image'] ?? null;
-
-                                // Ensure correct path
-                                if ($image && !str_starts_with($image, 'storage/')) {
+                                // Ensure correct path logic
+                                if ($image && !str_starts_with($image, 'storage/') && !str_starts_with($image, 'http')) {
                                     $image = 'storage/' . $image;
                                 }
                             @endphp
 
                             <div class="flex items-center gap-6 border-b pb-6">
 
-                                <!-- IMAGE -->
-                                <img 
-                                        src="{{ asset($details['image']) }}"
-                                        alt="{{ $details['name'] }}"
-                                        class="w-24 h-32 object-cover rounded-lg"
-                                    >
+                                <!-- image -->
+                                <img src="{{ asset($image) }}"
+                                    alt="{{ $details['name'] }}"
+                                    class="w-24 h-32 object-cover rounded-lg">
 
-                                <!-- INFO -->
+                                <!-- info -->
                                 <div class="flex-1">
                                     <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">
                                         {{ $details['brand'] }}
@@ -45,12 +41,35 @@
                                         {{ $details['name'] }}
                                     </h3>
 
-                                    <p class="text-sm text-gray-500 mt-1">
+                                    <!-- show selected size and color if they exist -->
+                                    <div class="flex gap-4 mt-1">
+                                        @if(isset($details['size']))
+                                            <p class="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-2 py-1">
+                                                Size: {{ $details['size'] }}
+                                            </p>
+                                        @endif
+                                        @if(isset($details['color']))
+                                            <p class="text-[10px] font-bold uppercase tracking-widest bg-gray-100 px-2 py-1">
+                                                Color: {{ $details['color'] }}
+                                            </p>
+                                        @endif
+                                    </div>
+
+                                    <p class="text-sm text-gray-500 mt-2">
                                         £{{ number_format($details['price'], 2) }} × {{ $details['quantity'] }}
                                     </p>
+
+                                    <!-- remove button -->
+                                    <form action="{{ route('cart.remove', $key) }}" method="POST" class="mt-2">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-[10px] font-black uppercase tracking-widest text-red-600 hover:underline">
+                                            Remove Item
+                                        </button>
+                                    </form>
                                 </div>
 
-                                <!-- TOTAL -->
+                                <!-- total -->
                                 <div class="text-right">
                                     <p class="font-black text-lg">
                                         £{{ number_format($details['price'] * $details['quantity'], 2) }}
@@ -58,12 +77,11 @@
                                 </div>
 
                             </div>
-
                         @endforeach
 
                     </div>
 
-                    <!-- SUMMARY -->
+                    <!-- summary -->
                     <div class="w-full lg:w-80">
 
                         <div class="bg-gray-50 p-8 rounded-xl">
@@ -96,7 +114,7 @@
 
             @else
 
-                <!-- EMPTY CART -->
+                <!-- when cart empty -->
                 <div class="text-center py-20 border-2 border-dashed rounded-2xl">
                     <p class="text-gray-400 font-medium italic">
                         Your bag is currently empty.

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
@@ -13,22 +14,35 @@ class CartController extends Controller
         return view('cart.index', compact('cart'));
     }
 
-    public function add(Product $product)
+    public function add(Request $request, Product $product)
     {
-        $cart = session()->get('cart', []);
+        
+        //  get the inputs from the form
+        $size = $request->input('size');
+        $color = $request->input('color');
+        $quantity = (int) $request->input('quantity', 1);
 
+        //  create a unique ID for this specific variation
+        // Example: "14-M-Blue"
+        $cartKey = $product->id . '-' . ($size ?? 'no-size') . '-' . ($color ?? 'no-color');
+
+        $cart = session()->get('cart', []);
         $image = $this->formatImagePath($product->main_image);
 
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity']++;
-            $cart[$product->id]['image'] = $image;
+        //  check if THIS specific variation is already in the cart
+        if (isset($cart[$cartKey])) {
+            $cart[$cartKey]['quantity'] += $quantity;
         } else {
-            $cart[$product->id] = [
+            // add new item with size and color details
+            $cart[$cartKey] = [
+                'product_id' => $product->id, // keep the real ID for database later
                 'name' => $product->name,
                 'brand' => $product->brand,
                 'price' => $product->price,
-                'quantity' => 1,
+                'quantity' => $quantity,
                 'image' => $image,
+                'size' => $size,
+                'color' => $color,
             ];
         }
 
@@ -56,14 +70,14 @@ class CartController extends Controller
         return $image;
     }
 
-    public function remove($id)
+
+    public function remove($key) // Change $id to $key
     {
         $cart = session()->get('cart', []);
-
-        unset($cart[$id]);
-
+        if(isset($cart[$key])) {
+            unset($cart[$key]);
+        }
         session()->put('cart', $cart);
-
         return back()->with('success', 'Product removed.');
     }
 
