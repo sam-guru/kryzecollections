@@ -58,6 +58,11 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return view('product.show', compact('product'));
+        // load the images but exclude the one that matches the main_image path
+        $gallery = $product->images()
+            ->where('image_path', '!=', $product->main_image)
+            ->get();
+
+        return view('product.show', compact('product', 'gallery'));    
     }
 }

@@ -4,7 +4,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
 
-            <!-- LEFT: IMAGE GALLERY -->
+            <!-- left:image galary -->
             <div 
                 x-data="{
                     activeImage: '{{ asset($product->main_image) }}'
@@ -12,10 +12,10 @@
                 class="grid grid-cols-1 md:grid-cols-[90px_1fr] gap-4"
             >
 
-                <!-- Thumbnails -->
+                <!-- thumbnails -->
                 <div class="order-2 md:order-1 flex md:flex-col gap-3 overflow-x-auto">
 
-                    <!-- Main image thumbnail -->
+                    <!-- main image thumbnails -->
                     <button 
                         type="button"
                         @click="activeImage = '{{ asset($product->main_image) }}'"
@@ -29,6 +29,11 @@
                     </button>
 
                     @foreach($product->images as $image)
+                        {{-- ADD THIS CHECK: Skip if this image is already the main thumbnail --}}
+                        @if(asset($image->image_path) === asset($product->main_image))
+                            @continue
+                        @endif
+
                         <button 
                             type="button"
                             @click="activeImage = '{{ asset($image->image_path) }}'"
@@ -44,7 +49,7 @@
 
                 </div>
 
-                <!-- Main Image Display -->
+                <!-- main image display -->
                 <div class="order-1 md:order-2 aspect-[3/4] bg-gray-100 overflow-hidden rounded-xl">
                     <img 
                         :src="activeImage"
@@ -55,7 +60,7 @@
 
             </div>
 
-            <!-- RIGHT: PRODUCT INFO -->
+            <!-- right:product info -->
             <div class="flex flex-col justify-start">
                 <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">
                     {{ $product->category }}
@@ -73,7 +78,7 @@
                     £{{ number_format($product->price, 2) }}
                 </p>
 
-                <!-- SIZE SELECT -->
+                <!-- size select -->
                 @if($product->sizes)
                 <div class="mb-6">
                     <p class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Size</p>
