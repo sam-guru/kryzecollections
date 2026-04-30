@@ -36,7 +36,7 @@
     <div class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- success message! -->
+            <!-- success message -->
             @if(session()->has('success'))
                 <div id="flash-message" class="mb-6 p-4 bg-black text-white text-[10px] font-bold uppercase tracking-widest flex justify-between items-center">
                     <span>{{ session('success') }}</span>
@@ -90,91 +90,89 @@
                                         {{ $product->brand }}
                                     </p>
 
-                                    
                                     <!-- actions -->
-                                    <!-- actions -->
-<div class="flex gap-2 items-stretch">
-    
-    <!-- favorite toggle -->
-    <form action="{{ route('favorite.toggle', $product) }}" method="POST" class="flex-1">
-        @csrf
-        <button type="submit"
-            class="w-full h-full border border-gray-200 py-3 flex items-center justify-center hover:bg-gray-50 transition group">
-            
-            @php
-                $isFavorited = $product->isFavoritedBy(auth()->user());
-            @endphp
+                                    <div class="flex gap-2 items-stretch">
+                                        
+                                        <!-- favorite toggle -->
+                                        <form action="{{ route('favorite.toggle', $product) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full h-full border border-gray-200 py-3 flex items-center justify-center hover:bg-gray-50 transition group">
+                                                
+                                                @php
+                                                    $isFavorited = $product->isFavoritedBy(auth()->user());
+                                                @endphp
 
-            @if($isFavorited)
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-600">
-                    <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001Z" />
-                </svg>
-            @else
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 group-hover:text-red-400 transition">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                </svg>
-            @endif
-        </button>
-    </form>
+                                                @if($isFavorited)
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-600">
+                                                        <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001Z" />
+                                                    </svg>
+                                                @else
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-400 group-hover:text-red-400 transition">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                                    </svg>
+                                                @endif
+                                            </button>
+                                        </form>
 
-    <!-- add to cart (Modal Trigger) -->
-    <div x-data="{ open: false, qty: 1 }" class="flex-1">
-        <button type="button" @click="open = true; qty = 1"
-            class="w-full h-full bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-900 transition flex items-center justify-center">
-            Add to Cart
-        </button>
+                                        <!-- add to cart (Modal Trigger) -->
+                                        <div x-data="{ open: false, qty: 1 }" class="flex-1">
+                                            <button type="button" @click="open = true; qty = 1"
+                                                class="w-full h-full bg-black text-white py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-gray-900 transition flex items-center justify-center">
+                                                Add to Cart
+                                            </button>
 
-        <!-- MODAL OVERLAY -->
-        <div x-show="open" 
-             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-             x-transition.opacity
-             style="display: none;">
-            
-            <!-- MODAL CONTENT -->
-            <div @click.away="open = false" class="bg-white p-8 rounded-xl max-w-sm w-full shadow-2xl relative text-left">
-                <!-- Close Button -->
-                <button @click="open = false" class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl">&times;</button>
-                
-                <h4 class="font-black text-lg uppercase italic tracking-tighter mb-1">{{ $product->name }}</h4>
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-6">{{ $product->brand }}</p>
+                                            <!-- modal overlay -->
+                                            <div x-show="open" 
+                                                class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                                                x-transition.opacity
+                                                style="display: none;">
+                                                
+                                                <!-- modal content -->
+                                                <div @click.away="open = false" class="bg-white p-8 rounded-xl max-w-sm w-full shadow-2xl relative text-left">
+                                                    <!-- close button -->
+                                                    <button @click="open = false" class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl">&times;</button>
+                                                    
+                                                    <h4 class="font-black text-lg uppercase italic tracking-tighter mb-1">{{ $product->name }}</h4>
+                                                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-6">{{ $product->brand }}</p>
 
-                <form action="{{ route('cart.add', $product) }}" method="POST">
-                    @csrf
-                    
-                    <!-- SIZE SELECTION -->
-                    <p class="text-[10px] font-black uppercase tracking-widest mb-3">Select Size</p>
-                    <div class="grid grid-cols-3 gap-2 mb-6">
-                        @if($product->sizes)
-                            @foreach($product->sizes as $size)
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="size" value="{{ $size }}" class="peer hidden" required>
-                                    <div class="border py-2 text-center text-[10px] font-bold uppercase tracking-widest peer-checked:bg-black peer-checked:text-white transition hover:border-black">
-                                        {{ $size }}
+                                                    <form action="{{ route('cart.add', $product) }}" method="POST">
+                                                        @csrf
+                                                        
+                                                        <!-- size selection -->
+                                                        <p class="text-[10px] font-black uppercase tracking-widest mb-3">Select Size</p>
+                                                        <div class="grid grid-cols-3 gap-2 mb-6">
+                                                            @if($product->sizes)
+                                                                @foreach($product->sizes as $size)
+                                                                    <label class="cursor-pointer">
+                                                                        <input type="radio" name="size" value="{{ $size }}" class="peer hidden" required>
+                                                                        <div class="border py-2 text-center text-[10px] font-bold uppercase tracking-widest peer-checked:bg-black peer-checked:text-white transition hover:border-black">
+                                                                            {{ $size }}
+                                                                        </div>
+                                                                    </label>
+                                                                @endforeach
+                                                            @else
+                                                                <p class="col-span-3 text-[10px] italic text-gray-400 uppercase">One Size Only</p>
+                                                            @endif
+                                                        </div>
+
+                                                        <!-- quantity selecton -->
+                                                        <p class="text-[10px] font-black uppercase tracking-widest mb-3">Quantity</p>
+                                                        <div class="flex items-center border w-32 mb-8">
+                                                            <button type="button" @click="if(qty > 1) qty--" class="px-4 py-2 hover:bg-gray-50 border-r text-lg">-</button>
+                                                            <input type="number" name="quantity" x-model="qty" readonly 
+                                                                class="w-full text-center border-none text-xs font-bold focus:ring-0 bg-transparent">
+                                                            <button type="button" @click="qty++" class="px-4 py-2 hover:bg-gray-50 border-l text-lg">+</button>
+                                                        </div>
+
+                                                        <button type="submit" class="w-full bg-black text-white py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition shadow-lg">
+                                                            Add to Bag — £<span x-text="(qty * {{ $product->price }}).toFixed(2)"></span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </label>
-                            @endforeach
-                        @else
-                            <p class="col-span-3 text-[10px] italic text-gray-400 uppercase">One Size Only</p>
-                        @endif
-                    </div>
-
-                    <!-- QUANTITY SELECTION -->
-                    <p class="text-[10px] font-black uppercase tracking-widest mb-3">Quantity</p>
-                    <div class="flex items-center border w-32 mb-8">
-                        <button type="button" @click="if(qty > 1) qty--" class="px-4 py-2 hover:bg-gray-50 border-r text-lg">-</button>
-                        <input type="number" name="quantity" x-model="qty" readonly 
-                               class="w-full text-center border-none text-xs font-bold focus:ring-0 bg-transparent">
-                        <button type="button" @click="qty++" class="px-4 py-2 hover:bg-gray-50 border-l text-lg">+</button>
-                    </div>
-
-                    <button type="submit" class="w-full bg-black text-white py-4 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition shadow-lg">
-                        Add to Bag — £<span x-text="(qty * {{ $product->price }}).toFixed(2)"></span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
                                 </div>
 
