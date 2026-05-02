@@ -34,7 +34,7 @@
                     Return to Shop
                 </a>
                 
-                <a href="https://github.com/your-username/your-repo" target="_blank" class="px-8 py-4 border border-gray-200 text-black text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition">
+                <a href="https://github.com/sam-guru/kryzecollections" target="_blank" class="px-8 py-4 border border-gray-200 text-black text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition">
                     View Code on GitHub
                 </a>
             </div>
