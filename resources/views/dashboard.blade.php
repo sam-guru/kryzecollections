@@ -58,67 +58,68 @@
                 </div>
 
                 <!-- right column: purchase history -->
-                <!-- right column: purchase history -->
-<div class="space-y-4">
-    <div class="flex justify-between items-end">
-        <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Order History</h4>
-        <span class="text-[9px] text-gray-300 uppercase font-medium">{{ $orders->count() }} Total Orders</span>
-    </div>
-
-    <div class="space-y-3">
-        @forelse($orders as $order)
-            <div class="bg-white border border-gray-100 p-5 group hover:border-black transition-colors duration-300">
-                <!-- Header: ID and Status -->
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p class="text-[11px] font-black italic tracking-tighter uppercase leading-none">
-                            {{ $order->order_number }}
-                        </p>
-                        <p class="text-[9px] text-gray-400 uppercase font-bold mt-1">
-                            {{ $order->created_at->format('d.m.y') }} — {{ $order->created_at->format('H:i') }}
-                        </p>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-end">
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Order History</h4>
+                        <a href="{{ route('orders.index') }}" class="text-[10px] font-bold uppercase underline hover:text-black transition">
+                            View All Orders
+                        </a>
                     </div>
-                    <div class="flex flex-col items-end">
-                        <span class="text-[8px] px-2 py-0.5 border border-black font-black uppercase tracking-widest mb-1 group-hover:bg-black group-hover:text-white transition-colors">
-                            {{ $order->status }}
-                        </span>
+
+                    <div class="space-y-3">
+                        @forelse($orders as $order)
+                            <div class="bg-white border border-gray-100 p-5 group hover:border-black transition-colors duration-300">
+                                <!-- Header: ID and Status -->
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <p class="text-[11px] font-black italic tracking-tighter uppercase leading-none">
+                                            {{ $order->order_number }}
+                                        </p>
+                                        <p class="text-[9px] text-gray-400 uppercase font-bold mt-1">
+                                            {{ $order->created_at->format('d.m.y') }} — {{ $order->created_at->format('H:i') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-col items-end">
+                                        <span class="text-[8px] px-2 py-0.5 border border-black font-black uppercase tracking-widest mb-1 group-hover:bg-black group-hover:text-white transition-colors">
+                                            {{ $order->status }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Body: Item List -->
+                                <div class="space-y-2 mb-4 border-l-2 border-gray-50 pl-4">
+                                    @foreach($order->items as $item)
+                                        <div class="flex justify-between items-center">
+                                            <p class="text-[10px] text-gray-600 uppercase tracking-tight">
+                                                <span class="font-black text-black">{{ $item->quantity }}x</span> {{ $item->product_name }}
+                                                <span class="text-gray-300 mx-1">/</span>
+                                                <span class="text-[9px] font-bold">{{ $item->size }}</span>
+                                            </p>
+                                            <p class="text-[10px] font-medium text-gray-400">£{{ number_format($item->price, 2) }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <!-- Footer: Total and Shipping -->
+                                <div class="pt-3 border-t border-gray-50 flex justify-between items-end">
+                                    <div>
+                                        <p class="text-[8px] text-gray-300 uppercase font-bold tracking-widest mb-1 text-[7px]">Shipping To</p>
+                                        <p class="text-[9px] text-gray-500 uppercase truncate max-w-[150px] italic">
+                                            {{ $order->shipping_address }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[12px] font-black italic tracking-tighter">£{{ number_format($order->total_price, 2) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-20 text-center border-2 border-dashed border-gray-50 rounded-xl">
+                                <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300">Archive Empty</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
-
-                <!-- Body: Item List -->
-                <div class="space-y-2 mb-4 border-l-2 border-gray-50 pl-4">
-                    @foreach($order->items as $item)
-                        <div class="flex justify-between items-center">
-                            <p class="text-[10px] text-gray-600 uppercase tracking-tight">
-                                <span class="font-black text-black">{{ $item->quantity }}x</span> {{ $item->product_name }}
-                                <span class="text-gray-300 mx-1">/</span>
-                                <span class="text-[9px] font-bold">{{ $item->size }}</span>
-                            </p>
-                            <p class="text-[10px] font-medium text-gray-400">£{{ number_format($item->price, 2) }}</p>
-                        </div>
-                    @endforeach
-                </div>
-
-                <!-- Footer: Total and Shipping -->
-                <div class="pt-3 border-t border-gray-50 flex justify-between items-end">
-                    <div>
-                        <p class="text-[8px] text-gray-300 uppercase font-bold tracking-widest mb-1 text-[7px]">Shipping To</p>
-                        <p class="text-[9px] text-gray-500 uppercase truncate max-w-[150px] italic">
-                            {{ $order->shipping_address }}
-                        </p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[12px] font-black italic tracking-tighter">£{{ number_format($order->total_price, 2) }}</p>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="py-20 text-center border-2 border-dashed border-gray-50 rounded-xl">
-                <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300">Archive Empty</p>
-            </div>
-        @endforelse
-    </div>
-</div>
             </div>
 
             <!-- profile management quick links -->

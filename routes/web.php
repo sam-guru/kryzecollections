@@ -75,10 +75,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/complete', [CheckoutController::class, 'complete'])
         ->name('checkout.store');
     
-    // The Success Page
+    // success page
     Route::get('/checkout-complete', function() {
         return view('checkout-success');
-    })->name('checkout.success');
+        })
+        ->name('checkout.success');
+
+    // full order history page
+    Route::get('/orders', [DashboardController::class, 'orderHistory'])
+        ->name('orders.index');
+    
+    // optional: individual order detail page
+    Route::get('/orders/{order}', [DashboardController::class, 'orderDetail'])
+        ->name('orders.show');
 });
 
 

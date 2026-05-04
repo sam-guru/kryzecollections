@@ -19,4 +19,12 @@ class DashboardController extends Controller
 
         return view('dashboard', compact('favorites', 'orders'));
     }
+
+    public function orderHistory()
+    {
+        //fFetch all order  user has ever made, newest first
+        $orders = auth()->user()->orders()->with('items')->latest()->get();
+        
+        return view('orders.index', compact('orders'));
+    }
 }
