@@ -19,14 +19,20 @@ class AddressController extends Controller
 
         auth()->user()->shippingAddresses()->create([
             'address_line_1' => $request->address_line_1,
-            'address_line_2' => $request->address_line_2,
             'city' => $request->city,
             'postcode' => $request->postcode,
+            'country' => $request->country ?? 'United Kingdom',
             'is_default' => $isFirst,
         ]);
 
+        // Check if the request wants to stay in checkout
+        if ($request->input('redirect') === 'checkout') {
+            return redirect()->route('checkout.address')->with('success', 'Address added!');
+        }
+
         return back()->with('success', 'Address saved successfully!');
     }
+
 
     public function destroy(ShippingAddress $address)
     {

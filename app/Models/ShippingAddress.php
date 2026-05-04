@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ShippingAddress extends Model
 {
     protected $fillable = [
+        'user_id',
         'address_line_1', 
         'address_line_2', 
         'city', 
@@ -14,9 +15,11 @@ class ShippingAddress extends Model
         'country', 
         'is_default'
     ];
-    
-    public function shippingAddresses()
+
+    public function user()
     {
-        return $this->hasMany(ShippingAddress::class);
+        return $this->belongsTo(User::class);
     }
+
+    
 }

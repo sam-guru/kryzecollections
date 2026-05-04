@@ -8,6 +8,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\AddressController;
 
 
 //  PUBLIC ROUTES
@@ -54,6 +55,30 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
+    
+    // Shipping Address Routes
+    Route::post('/addresses', [AddressController::class, 'store'])
+        ->name('addresses.store');
+    Route::delete('/addresses/{address}', [AddressController::class, 'destroy'])
+        ->name('addresses.destroy');
+
+    // Checkout Routes
+    // Start Checkout
+    Route::get('/checkout/address', [CheckoutController::class, 'selectAddress'])
+        ->name('checkout.address');
+    
+    // Process Address Selection -> Show Review
+    Route::post('/checkout/review', [CheckoutController::class, 'reviewOrder'])
+        ->name('checkout.review');
+    
+    // Final Step (The Simulation)
+    Route::post('/checkout/complete', [CheckoutController::class, 'complete'])
+        ->name('checkout.store');
+    
+    // The Success Page
+    Route::get('/checkout-complete', function() {
+        return view('checkout-success');
+    })->name('checkout.success');
 });
 
 
