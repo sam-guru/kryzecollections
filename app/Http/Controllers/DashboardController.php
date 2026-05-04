@@ -14,8 +14,8 @@ class DashboardController extends Controller
         // get the items the user favorited
         $favorites = $user->favoriteProducts()->latest()->take(4)->get();
 
-        // placeholder for orders (we will update this later)
-        $orders = [];
+        // get latest orders
+        $orders = auth()->user()->orders()->with('items')->latest()->get();
 
         return view('dashboard', compact('favorites', 'orders'));
     }
